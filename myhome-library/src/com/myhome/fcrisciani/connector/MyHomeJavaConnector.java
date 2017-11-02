@@ -33,6 +33,7 @@ public class MyHomeJavaConnector{
 
 	public String ip = null;                                // MyHome webserver IP address
 	public int port = 0;                                    // MyHome webserver port
+	public String passwd = null;							// MyHome webserver passwd
 	private Socket commandSk = null;                        // Socket for command sending
 	private Semaphore commandMutex = null;					// Mutex for the send command section
 
@@ -96,11 +97,13 @@ public class MyHomeJavaConnector{
 	 * Create an instance of this class, need the IP address and port of the webserver to connect to
 	 * @param ip IP address of the webserver
 	 * @param port port number of the webserver
+	 * @param passwd OpenWebNet password
 	 */
-	public MyHomeJavaConnector(final String ip, final int port) {
+	public MyHomeJavaConnector(final String ip, final int port, final String passwd) {
 		super();
 		this.ip = ip;
 		this.port = port;
+		this.passwd = passwd;
 		this.commandMutex = new Semaphore(1, true);
 		this.commandQueue = new PriorityCommandQueue();
 		this.commandQueueThread = new Thread(new PriorityQueueThread(this,commandQueue), "TailThread");
@@ -237,7 +240,7 @@ public class MyHomeJavaConnector{
 	 * @throws IOException in case of communication error
 	 */
 	public void startMonitoring() throws IOException{
-		monitorSk = MyHomeSocketFactory.openMonitorSession(ip,port);
+		monitorSk = MyHomeSocketFactory.openMonitorSession(ip,port,passwd);
 	}
 	/**
 	 * Reads the next message from the monitor session, note: you always must call the method {@link startMonitoring()}
